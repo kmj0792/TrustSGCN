@@ -9,9 +9,23 @@ TrustSGCN: Learning Trustworthiness on Edge Signs for Effective Signed Graph Con
 - Yeon-Chang Lee (yeonchang@gatech.edu)
 - Sang-Wook Kim (wook@hanyang.ac.kr)
 
-## Preprocessing
+## Input
+
+## Output
+
+## Arguments
+
+## Procedure
+1. Get pre_analysis percentage.
+2. Extract 23 topological features of train dataset.
+3. Get target node's extended EgoNets.
+4. Predict edge sign and confidence scores between two nodes using 23 topological features.
+5. measure trustworthiness of edge signs in the Egonet using two conditions.
+6. Performs different embedding propagation (trustworthy or untrustworthy)
+
+## Basic Usage
 ### To get pre_analysis percentage
-python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres= --n_thres --func=countTRI 
+```python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres= --n_thres --func=countTRI ```
 
 ### To get 23 topological feature for FExtra
 python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres= --n_thres --func=extract
