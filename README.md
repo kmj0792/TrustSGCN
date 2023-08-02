@@ -2,7 +2,7 @@
 
 ![ex_screenshot](./img/overview.png)
 
-This repository provides a reference implementation of TrustSGCN as described in the following paper "TrustSGCN: Learning Trustworthiness on Edge Signs for Effective Signed Graph Convolutional Networks", published at SIGIR 2023. (46th International ACM SIGIR Conference on Research and Development in Information Retrieval (ACM SIGIR 2023))
+This repository provides a reference implementation of TrustSGCN as described in the following paper "[TrustSGCN: Learning Trustworthiness on Edge Signs for Effective Signed Graph Convolutional Networks](https://doi.org/10.1145/3539618.3592075)", published at SIGIR 2023. (46th International ACM SIGIR Conference on Research and Development in Information Retrieval (ACM SIGIR 2023))
 
 ### Authors
 - Min-Jeong Kim (kmj0792@hanyang.ac.kr)
