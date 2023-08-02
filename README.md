@@ -12,18 +12,20 @@ TrustSGCN: Learning Trustworthiness on Edge Signs for Effective Signed Graph Con
 ### Input
 The input dataset should be saved in ```./experiment-data/``` folder. 
 
-The structure of the input file is the following:
+The structure of the input dataset is the following:
 
 ```| node_id1 | node_id2 | sign |```
 
 Node ids start from 0 to |*V*|-1 (*V* is the set of nodes in the dataset).
 
 ### Output
-The output of pre-processing files are saved in ```./embeddings/``` folder. 
+The outputs of ```countTRI``` function are saved in ```./count_triangle/``` folder. 
 
-The output of embeddings files are saved in ```./embeddings/trustsgcn-{args.agg}``` folder. 
+The outputs of ```extract```, ```setsubgraph```, ```predict```, ```setproMTX``` functions are saved in ```./features/``` folder. 
 
-The output of accuracies files are saved in ```./embeddings/trustsgcn-{args.agg}/result``` folder. 
+The node embeddings generated through the training process are saved in the  ```./embeddings/trustsgcn-{args.agg}``` folder. 
+
+The accuracies of TrustSGCN are saved in ```./embeddings/trustsgcn-{args.agg}/result``` folder. 
 
 ### Arguments
 #### For pre-processing (in ```argument.py```)
@@ -47,31 +49,31 @@ The output of accuracies files are saved in ```./embeddings/trustsgcn-{args.agg}
 ```
 
 ### Procedure
-1. Get ratios of balanced/unbalanced triads (```pre_analysis``` percentage).
-2. Extract 23 topological features of train dataset.
-3. Get target node's extended EgoNets.
-4. Predict edge sign and confidence scores between two nodes using 23 topological features.
-5. Measure trustworthiness of edge signs in the Egonet using two conditions.
-6. Performs different embedding propagation (trustworthy or untrustworthy).
+1. Obtain the ratios of balanced/unbalanced triads (```pre_analysis``` percentage).
+2. Extract 23 topological features from the train dataset.
+3. Generate the target node's extended EgoNet.
+4. Predict the edge sign and confidence scores between two nodes using 23 topological features.
+5. Measure the trustworthiness of edge signs in the EgoNet using two conditions.
+6. Perform different embedding propagations (trustworthy or untrustworthy).
 
 ### Basic Usage
 ```
-1. Get ratios of balanced/unbalanced triads (pre_analysis percentage).
+1. Obtain the ratios of balanced/unbalanced triads (pre_analysis percentage).
 python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres=0.98 --n_thres=0.98 --func=countTRI
 
-2. Extract 23 topological features of train dataset.
+2. xtract 23 topological features from the train dataset.
 python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres=0.98 --n_thres=0.98 --func=extract
 
-3. Get target node's extended EgoNets.
+3. Generate the target node's extended EgoNet.
 python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres=0.98 --n_thres=0.98 --func=setsubgraph
 
-4. Predict edge sign and confidence scores between two nodes using 23 topological features.
+4. Predict the edge sign and confidence scores between two nodes using 23 topological features.
 python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres=0.98 --n_thres=0.98 --func=predict
 
-5. Measure trustworthiness of edge signs in the Egonet using two conditions.
+5. Measure the trustworthiness of edge signs in the EgoNet using two conditions.
 python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres=0.98 --n_thres=0.98 --func=setproMTX
 
-6. Performs different embedding propagation (trustworthy or untrustworthy).
+6. Perform different embedding propagations (trustworthy or untrustworthy).
 python trustsgcn.py --dataset=bitcoin_alpha --batch_size=300 --percent=80 --k=1 --hop=2 --p_thres=0.98 --n_thres=0.98 --sample_num=30 --get_dgl=True
 ```
 
