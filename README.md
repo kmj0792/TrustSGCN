@@ -26,7 +26,7 @@ TrustSGCN: Learning Trustworthiness on Edge Signs for Effective Signed Graph Con
 ## Basic Usage
 
 ```
-<!-- 1. Get ratios of balanced/unbalanced triads (```pre_analysis``` percentage). -->
+# 1. Get ratios of balanced/unbalanced triads (```pre_analysis``` percentage).
 python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres= --n_thres --func=countTRI
 
 <!-- 2. Extract 23 topological features of train dataset. -->
