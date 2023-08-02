@@ -16,25 +16,31 @@ TrustSGCN: Learning Trustworthiness on Edge Signs for Effective Signed Graph Con
 ## Arguments
 
 ## Procedure
-1. Get pre_analysis percentage.
+1. Get ratios of balanced/unbalanced triads (```pre_analysis``` percentage).
 2. Extract 23 topological features of train dataset.
 3. Get target node's extended EgoNets.
 4. Predict edge sign and confidence scores between two nodes using 23 topological features.
-5. measure trustworthiness of edge signs in the Egonet using two conditions.
-6. Performs different embedding propagation (trustworthy or untrustworthy)
+5. Measure trustworthiness of edge signs in the Egonet using two conditions.
+6. Performs different embedding propagation (trustworthy or untrustworthy).
 
 ## Basic Usage
-### To get pre_analysis percentage
-```python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres= --n_thres --func=countTRI ```
 
-### To get 23 topological feature for FExtra
+```
+<!-- 1. Get ratios of balanced/unbalanced triads (```pre_analysis``` percentage). -->
+python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres= --n_thres --func=countTRI
+
+<!-- 2. Extract 23 topological features of train dataset. -->
 python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres= --n_thres --func=extract
 
-### To get target node's EgoNets
+<!-- 3. Get target node's extended EgoNets. -->
 python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres= --n_thres --func=setsubgraph
 
-### FExtra (output: predict  sign, confidence score)
+<!-- 4. Predict edge sign and confidence scores between two nodes using 23 topological features. -->
 python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres= --n_thres --func=predict
 
-### Two condition으로 trustworthy or untrustworthy 인지 구분
+<!-- 5. Measure trustworthiness of edge signs in the Egonet using two conditions. -->
 python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres= --n_thres --func=setproMTX
+
+<!-- 6. Performs different embedding propagation (trustworthy or untrustworthy). -->
+python trustsgcn.py --dataset=bitcoin_alpha --batch_size=300 --percent=80 --k=1 --hop=2 --p_thres=0.98 --n_thres=0.98 --sample_num=30 --lamda1=1 --get_dgl=True --task=sign
+```
