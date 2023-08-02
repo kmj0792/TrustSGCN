@@ -12,9 +12,7 @@ This repository provides a reference implementation of TrustSGCN as described in
 ## Input
 The input dataset should be saved in ```./experiment-data/``` folder. 
 
-The structure of the input dataset is the following:
-
-```| node_id1 | node_id2 | sign |```
+The structure of the input dataset is the following: ```| node_id1 | node_id2 | sign |```
 
 Node ids start from 0 to |*V*|-1 (*V* is the set of nodes in the dataset).
 
@@ -38,7 +36,7 @@ The accuracies of TrustSGCN are saved in ```./embeddings/trustsgcn-{args.agg}/re
 --func                    Select a function of (countTRI, extract, setsubgraph, predict, setproMTX) (default: "setproMTX")
 ```
 
-### For embedding propagation (in ```trustsgcn.py```)
+#### For embedding propagation (in ```trustsgcn.py```)
 ```
 --dataset                 Dataset name. (default: "bitcoin_alpha")
 --hop                     Maximum hop count to include in EgoNets. (default: 2)
