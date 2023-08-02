@@ -4,12 +4,12 @@
 
 This repository provides a reference implementation of TrustSGCN as described in the following paper "[TrustSGCN: Learning Trustworthiness on Edge Signs for Effective Signed Graph Convolutional Networks](https://doi.org/10.1145/3539618.3592075)", published at SIGIR 2023. (46th International ACM SIGIR Conference on Research and Development in Information Retrieval (ACM SIGIR 2023))
 
-### Authors
+## Authors
 - Min-Jeong Kim (kmj0792@hanyang.ac.kr)
 - Yeon-Chang Lee (yeonchang@gatech.edu)
 - Sang-Wook Kim (wook@hanyang.ac.kr)
 
-### Input
+## Input
 The input dataset should be saved in ```./experiment-data/``` folder. 
 
 The structure of the input dataset is the following:
@@ -18,7 +18,7 @@ The structure of the input dataset is the following:
 
 Node ids start from 0 to |*V*|-1 (*V* is the set of nodes in the dataset).
 
-### Output
+## Output
 The outputs of ```countTRI``` function are saved in ```./count_triangle/``` folder. 
 
 The outputs of ```extract```, ```setsubgraph```, ```predict```, ```setproMTX``` functions are saved in ```./features/``` folder. 
@@ -27,7 +27,7 @@ The node embeddings generated through the training process are saved in the  ```
 
 The accuracies of TrustSGCN are saved in ```./embeddings/trustsgcn-{args.agg}/result``` folder. 
 
-### Arguments
+## Arguments
 #### For pre-processing (in ```argument.py```)
 ```
 --dataset                 Dataset name. (default: "bitcoin_alpha")
@@ -38,7 +38,7 @@ The accuracies of TrustSGCN are saved in ```./embeddings/trustsgcn-{args.agg}/re
 --func                    Select a function of (countTRI, extract, setsubgraph, predict, setproMTX) (default: "setproMTX")
 ```
 
-#### For embedding propagation (in ```trustsgcn.py```)
+### For embedding propagation (in ```trustsgcn.py```)
 ```
 --dataset                 Dataset name. (default: "bitcoin_alpha")
 --hop                     Maximum hop count to include in EgoNets. (default: 2)
