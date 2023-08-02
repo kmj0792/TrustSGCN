@@ -4,7 +4,7 @@ This repository provides a reference implementation of TrustSGCN as described in
 TrustSGCN: Learning Trustworthiness on Edge Signs for Effective Signed Graph Convolutional Networks
 46th International ACM SIGIR Conference on Research and Development in Information Retrieval (ACM SIGIR 2023)
 
-## Authors
+### Authors
 - Min-Jeong Kim (kmj0792@hanyang.ac.kr)
 - Yeon-Chang Lee (yeonchang@gatech.edu)
 - Sang-Wook Kim (wook@hanyang.ac.kr)
@@ -57,7 +57,7 @@ The code has been tested running under Python 3.7.4. The required packages are a
 - ```torch-scatter==2.1.0+pt112cu116```
 - ```torch-sparse==0.6.16+pt112cu116```
 
-  ## Cite
+## Cite
   ```
   @inproceedings{kim2023trustsgcn,
   title={TrustSGCN: Learning Trustworthiness on Edge Signs for Effective Signed Graph Convolutional Networks},
