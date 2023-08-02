@@ -10,8 +10,18 @@ TrustSGCN: Learning Trustworthiness on Edge Signs for Effective Signed Graph Con
 - Sang-Wook Kim (wook@hanyang.ac.kr)
 
 ### Input
+The input dataset should be saved in ```./experiment-data/``` folder. 
+
+The structure of the input file is the following:
+
+```node_id1 | node_id2 | sign```
+
+Node ids start from 0 to |*V*|-1 (*V* is the set of nodes in the dataset).
 
 ### Output
+The output of pre-processing files are saved in ```./embeddings/``` folder. 
+The output of embeddings files are saved in ```./embeddings/trustsgcn-{args.agg}``` folder. 
+The output of accuracies files are saved in ```./embeddings/trustsgcn-{args.agg}/result``` folder. 
 
 ### Arguments
 
