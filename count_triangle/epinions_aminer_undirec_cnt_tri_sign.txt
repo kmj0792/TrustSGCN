@@ -1,0 +1,9 @@
+number of triangles checked: 393860
+number of triangles with ppp: 264498	0.8181118022412411
+number of triangles with ppn: 58805	0.1818881977587588
+number of triangles with pnp: 58805	0.5123681069259656
+number of triangles with pnn: 55966	0.4876318930740344
+number of triangles with npp: 58805	0.5123681069259656
+number of triangles with npn: 55966	0.4876318930740344
+number of triangles with nnp: 55966	0.7932026588432047
+number of triangles with nnn: 14591	0.2067973411567952
