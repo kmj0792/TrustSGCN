@@ -18,36 +18,37 @@ now_=datetime.now().strftime('%y-%m-%d %H:%M:%S')
 def set_subgraph(flag, filename, max_hop, TWO_HOP_SUB, dic_path, THR_HOP_SUB):
     if flag:
         print("Set subgraph.........")
-        adj_lists_all = defaultdict(list)# 빈 딕셔너리로 초기화
-        adj_lists_1hop = set()# 빈 딕셔너리로 초기화
-        adj_lists_2hop = defaultdict(list)# 빈 딕셔너리로 초기화
-       
+        adj_lists_all = defaultdict(list)
+        adj_lists_1hop = set()
+        adj_lists_2hop = defaultdict(list)
+
         with open(filename) as fp:
-            # Line하나씩읽어서 일단 dict구성
+    
             for i, line in enumerate(fp):
                 info = line.strip().split()
                 person1 = int(info[0]) # from
                 person2 = int(info[1]) # to
                 sign = int(info[2])# sign
-                value1=[person1, sign, 1] # 노드, 부호, 홉
-                value2=[person2, sign, 1] # 노드, 부호, 홉
+                value1=[person1, sign, 1] # from node, sign, hop
+                value2=[person2, sign, 1] # to node, sign, hop
 
                 adj_lists_all[person1].append(value2)
                 adj_lists_all[person2].append(value1)
             
             time1 = time.time()
+
             # 2hop 
             if max_hop == 2:
                 for p1 in tqdm(adj_lists_all.keys(), bar_format='{desc:<5.5}{percentage:3.0f}%|{bar:10}{r_bar}'):
                     adj_lists_all[p1][:] = list(set(map(tuple, adj_lists_all[p1][:])))
                     final_adj_lists_all = adj_lists_all[p1][:] 
                     for p2,sign,hop in final_adj_lists_all:
-                        # adj_lists_all[p2][:] = list(set(map(tuple, adj_lists_all[p2][:])))
+                    
                         if hop ==1:    
                             for hp, hsign, hhop in adj_lists_all[p2]:
                                 if hp != p1 and hhop==1:
                                     final_adj_lists_all.append([hp, hsign*sign, 2])                    
-                    # adj_lists_all[p1] = list(set(map(tuple, final_adj_lists_all[:])))
+             
                     adj_lists_all[p1] = final_adj_lists_all[:]
             
             #3hop 
@@ -61,7 +62,7 @@ def set_subgraph(flag, filename, max_hop, TWO_HOP_SUB, dic_path, THR_HOP_SUB):
                     for frieds, fsign, fhop in final_adj_lists_all: 
                         if(fhop==2):
                             for ffriends, ffsign, ffhop in adj_lists_all[frieds]: 
-                                if(ffriends != me  and ffhop ==  1): #if(ffhop ==  1 and ffriends != me and ffriends != frieds):
+                                if(ffriends != me  and ffhop ==  1): 
                                     temp = [ffriends, ffsign*fsign , 3]
                                     final_adj_lists_all.append(temp)                    
                     adj_lists_all[me] = list(set(map(tuple, final_adj_lists_all[:]))) 
@@ -131,11 +132,10 @@ def init(FUNCTION, P_THRESN, N_THRESN):
 
 
     if FUNCTION == "extract":
-        
-        df_train, features_train, mtx = extract_features(True, TRAIN_PATH, FEA_PATH, NUM_NODE)
+        df_train, features_train, mtx = extract_features(True, FEA_PATH, NUM_NODE)
         return
     else:
-        df_train, features_train, mtx = extract_features(False, TRAIN_PATH, FEA_PATH, NUM_NODE)
+        df_train, features_train, mtx = extract_features(False, FEA_PATH, NUM_NODE)
 
     if FUNCTION == "setsubgraph":
         dic = set_subgraph(flag=True, filename=TRAIN_PATH, max_hop=HOP, TWO_HOP_SUB=TWO_HOP_SUB_PATH, dic_path=SUBGRAPH_DIC_PATH, THR_HOP_SUB = THR_HOP_SUB_PATH) # TRAIN DATASET으로 서브 그래프  #, lists_pos, lists_neg
@@ -146,13 +146,11 @@ def init(FUNCTION, P_THRESN, N_THRESN):
 
     if FUNCTION == "predict":
         mtx = predict_FExtra_scores_save_time(True, FEA_PATH, features_train, mtx, NUM_NODE,dic)#트레인으로 학습한 feature를  기반으로 test데이터의 featrue 점수 계산
-        #2번째 파라미터 train or test 변경해야함
         return
     else:
         mtx = predict_FExtra_scores_save_time(False, FEA_PATH, features_train, mtx, NUM_NODE,dic) 
     
     if FUNCTION == "setproMTX":
-        
         #여기서  FExtra가 인풋으로 들어감 : FEA_PATH
         lists_T1, lists_T2, lists_U1, lists_U2 =process(FEA_PATH, df_train, NUM_NODE, [P_THRESN, N_THRESN], dic)
         Untrustworthy_percent =  (len(lists_U1) + len(lists_U2)) / (len(lists_T1) + len(lists_T2)+ len(lists_U1) + len(lists_U2))

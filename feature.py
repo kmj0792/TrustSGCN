@@ -53,7 +53,6 @@ def extract_features_for_seed(snode, mtx, n_user):
                      matrix.get_degree(mtx[0][2], tnode), matrix.get_degree(mtx[0][3], tnode)]
         lt_degree.extend([lt_degree[0] + lt_degree[1], lt_degree[2] + lt_degree[3], mtx[1][snode, tnode]])
         for j in range(16):
-            # print(str(j) + " " + str(snode) + " " + str(tnode))
             lt_degree.append(mtx[2][j][snode, tnode])
         features.append(Feature(snode, tnode, lt_degree))
     return features
@@ -70,7 +69,6 @@ def extract_features_for_seed_save_time(snode, mtx, n_user, adj_set):
                         matrix.get_degree(mtx[0][2], tnode), matrix.get_degree(mtx[0][3], tnode)]
             lt_degree.extend([lt_degree[0] + lt_degree[1], lt_degree[2] + lt_degree[3], mtx[1][snode, tnode]])
             for j in range(16):
-                # print(str(j) + " " + str(snode) + " " + str(tnode))
                 lt_degree.append(mtx[2][j][snode, tnode])
         else:
             lt_degree = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]

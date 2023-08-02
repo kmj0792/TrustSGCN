@@ -1,6 +1,5 @@
 version = 'undirec' # direc or undirec
 
-
 # full_graph_filename:  "./ours/experiment-data/{}/{}.txt".format(dataset[i], dataset[i])
 def call_check_triangle_sign(full_graph_filename, dataset, split_chr=' ', ):
     ppp, ppn, pnp, pnn, npp, npn, nnp, nnn, cnt_tri_all = check_triangle_sign(full_graph_filename, split_chr)
@@ -39,8 +38,8 @@ def check_triangle_sign(full_graph_filename, split_chr=" "):
     npp=0
     npn=0
     nnp=0
-    nnn = 0 #; 
-    # get_triangles( ) <- iterator (expecially generator) for triangles. (uses 'yield' keyword)
+    nnn=0 
+
 
     tri_dict=get_triangles(adj_dict_drct)
     for triangle in get_triangles(adj_dict_drct): # count negative edges in a single triangle
@@ -82,8 +81,6 @@ def check_triangle_sign(full_graph_filename, split_chr=" "):
             elif prior1sign+prior2sign+posteriorsign == -3:
                 nnn+=1
             
-        '''cnt_tri_pos[cnt_pos] += 1
-        cnt_tri_neg[cnt_neg] += 1'''
         cnt_tri_all += 1
 
         if cnt_tri_all % 1000 == 0:
@@ -115,7 +112,6 @@ def get_triangles(adj_dict_undrct):
                     if center in adj_dict_undrct:
                         if nhd_2 in adj_dict_undrct[center]:
                             yield (center, nhd_1, nhd_2)
-                    # else: continue
             visited_center_nhds.add(nhd_1)
 
         visited_centers.add(center)
@@ -162,7 +158,6 @@ def add_sign_to_dict_undirect(dictionary, key1, key2, sign):
 def add_sign_to_dict_direct(dictionary, key1, key2, sign):
     if key1 not in dictionary:
         dictionary[key1] = {}
-
     dictionary[key1][key2] = sign
 
 
@@ -185,10 +180,9 @@ def add_to_dict_direct(dictionary, key1, key2):
 
 def cntTriangle(data):
     dataset = [data]
-    split_chr = ["\t"] # bitcoin_alpha는 " ", 나머지는 "\t"
-    # s1 = time.time()
+    split_chr = ["\t"] 
+   
     for i in range(len(dataset)):
-        # s_temp = time.time()
         print(dataset[i] + ".....")
         full_graph_filename = "./experiment-data/{}/{}.txt".format(dataset[i], dataset[i])
         call_check_triangle_sign(full_graph_filename, dataset[i], split_chr[i])

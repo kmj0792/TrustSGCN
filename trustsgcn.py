@@ -1,11 +1,4 @@
-# !/usr/bin/env python3
-# -*- coding: utf-8 -*-
-#bit otc 하는중
-"""
-@author: huangjunjie
-@file: sdgnn.py
-@time: 2019/12/10
-"""
+# Performs different embedding propagation (trustworthy or untrustworthy)
 
 import os
 import sys
@@ -44,34 +37,30 @@ parser.add_argument('--devices', type=str, default='cuda:0', help='Devices')
 parser.add_argument('--seed', type=int, default=111, help='Random seed.')
 parser.add_argument('--epochs', type=int, default=200, help='Number of epochs to train.')
 
-parser.add_argument('--dataset', default='bitcoin_otc', help='Dataset(bitcoin_otc, epinions_aminer, bitcoin_alpha)')
+parser.add_argument('--dataset', default='bitcoin_alpha', help='Dataset(bitcoin_alpha, bitcoin_otc, slashdot_aminer, epinions_aminer)')
 parser.add_argument('--lr', type=float, default=0.01, help='Initial learning rate.')
-parser.add_argument("--percent", default=80, help="True or False?. Default is \"embedding\"")   
+parser.add_argument("--percent", default=80, help="Sparsity setting(80, 60, 40, 20)")   
 parser.add_argument('--weight_decay', type=float, default=0.001, help='Weight decay (L2 loss on parameters).')
 
 parser.add_argument('--batch_size', type=int, default=300, help='Batch size')
-parser.add_argument('--sample_num', type=int, default=30, help='sample_num')
-parser.add_argument('--sampler', default=True, help='sampler') 
-# bitcoin_alpha: 30
-# bitcoin_otc: 30
-# slashdot_aminer: 50 
-# epinions_aminer: 20
+parser.add_argument('--sample_num', type=int, default=30, help='sample_num(bitcoin_alpha: 30, bitcoin_otc: 30, slashdot: 20, epinions: 10)')
+# parser.add_argument('--sampler', default=True, help='sampler') 
 
 parser.add_argument('--k', default=1, help='Folder k')
 parser.add_argument('--agg', default='mean', choices=['mean'], help='Aggregator choose')
 parser.add_argument('--hop', default='2', help='hop')
 parser.add_argument("--p_thres", type=float, default=0.98, help="Positive threshold (beta_+). Default is 1.0")
 parser.add_argument("--n_thres", type=float, default=0.98, help="Negative threshold (beta_-). Default is 0.6")
-parser.add_argument('--hop_distin', default='learning', help='hop distinguish (no, inverse, learning)')
+# parser.add_argument('--hop_distin', default='learning', help='hop distinguish (no, inverse, learning)')
 
-parser.add_argument('--dim', type=int, default=32, help='Embedding dimension')
+parser.add_argument('--dim', type=int, default=32, help='Embedding dimension (pos: 32, neg: 32 -> total=64)')
 parser.add_argument('--fea_dim', type=int, default=32, help='Feature embedding dimension')
-parser.add_argument('--get_dgl', type=str, default='False', choices=['True', 'False'], help='GET DGL GRAPH')
+parser.add_argument('--get_dgl', type=str, default='True', choices=['True', 'False'], help='Get DGL graph')
 args = parser.parse_args()
 PER = args.percent
 TASK = args.task
-GET_DGL = args.get_dgl # False
-SAMPLER = args.sampler#True # False
+GET_DGL = args.get_dgl
+SAMPLER = args.sampler
 
 OUTPUT_DIR = f'./embeddings/trustsgcn-{args.agg}'
 
@@ -100,12 +89,12 @@ DATASET=  args.dataset
 HOP= int(args.hop)
 P_THRESN=args.p_thres
 N_THRESN=args.n_thres
-HOP_DISTIN = args.hop_distin
+# HOP_DISTIN = args.hop_distin
 SAMPLE_NUM = args.sample_num
 
 #path
 FEA_PATH='./features/{}'.format(DATASET)
-RESULT_PATH='/result/{}_{}fold_{}hop_thre-{}-{}_{}distin_{}lr_{}bat_{}samp_sign_{}.txt'.format(DATASET,K, HOP, P_THRESN, N_THRESN, HOP_DISTIN, LEARNING_RATE, BATCH_SIZE, SAMPLE_NUM, PER)
+RESULT_PATH='/result/{}_{}fold_{}hop_thre-{}-{}_{}lr_{}bat_{}samp_sign_{}.txt'.format(DATASET,K, HOP, P_THRESN, N_THRESN, LEARNING_RATE, BATCH_SIZE, SAMPLE_NUM, PER)
 
 
 MTX_T1_PATH = FEA_PATH +'/mtxT1-{}-{}-{}-{}-{}hop_{}.npy'.format(DATASET, K, P_THRESN, N_THRESN, HOP, PER)
@@ -118,9 +107,6 @@ DGLGRAPH_U1_PATH= FEA_PATH + '/graphU1{}_u{}_{}_{}_{}_{}.npy'.format(DATASET, K,
 DGLGRAPH_U2_PATH= FEA_PATH + '/graphU2{}_u{}_{}_{}_{}_{}.npy'.format(DATASET, K, HOP, P_THRESN, N_THRESN,PER)
 
 class Encoder(nn.Module):
-    """
-    Encode features to embeddings
-    """
     def __init__(self, features_pos, features_neg, feature_dim, embed_dim, MLG, aggs):
         super(Encoder, self).__init__()
 
@@ -151,15 +137,9 @@ class Encoder(nn.Module):
 
 
     def forward(self, nodes):
-        """
-        Generates embeddings for nodes.
-        """
-
         if not isinstance(nodes, list) and nodes.is_cuda:
             nodes = nodes.data.cpu().numpy().tolist()
-
-    
-        
+ 
         neigh_feats_all= [agg(nodes, adj, ind) for adj, agg, ind in zip(self.MLG, self.aggs, range(len(self.MLG)))]
         final_pos = neigh_feats_all[0][0] + neigh_feats_all[1][0] + neigh_feats_all[2][0] + neigh_feats_all[3][0]
         final_neg = neigh_feats_all[0][1] + neigh_feats_all[1][1] + neigh_feats_all[2][1] + neigh_feats_all[3][1]
@@ -180,7 +160,6 @@ class EncoderP(nn.Module):
         self.features_pos = features_pos
         self.features_neg = features_neg
         self.feat_dim = feature_dim
-        # self.adj_lists = adj_lists
         self.MLG = MLG
         self.aggs = aggs
 
@@ -189,7 +168,6 @@ class EncoderP(nn.Module):
             self.add_module('agg_{}'.format(i), agg)
             self.aggs[i] = agg.to(DEVICES)
 
-
         self.pos_nonlinear_layer = nn.Sequential(
                 nn.Linear((2 * len(MLG)) * feature_dim, feature_dim),
                 nn.Tanh(),
@@ -197,30 +175,23 @@ class EncoderP(nn.Module):
         )
 
  
-
-
     def forward(self, nodes):
         if not isinstance(nodes, list) and nodes.is_cuda:
             nodes = nodes.data.cpu().numpy().tolist()
 
-        
         neigh_feats_all= [agg(nodes, adj, ind) for adj, agg, ind in zip(self.MLG, self.aggs, range(len(self.MLG)))]
-
         final_pos = torch.cat([self.features_pos(torch.LongTensor(nodes).to(DEVICES)), neigh_feats_all[0][0]], 1)
-
         combined_pos = self.pos_nonlinear_layer(final_pos)
          
         return combined_pos
 
 class EncoderN(nn.Module):
-  
     def __init__(self, features_pos, features_neg, feature_dim, embed_dim, MLG, aggs):
         super(EncoderN, self).__init__()
 
         self.features_pos = features_pos
         self.features_neg = features_neg
         self.feat_dim = feature_dim
-        # self.adj_lists = adj_lists
         self.MLG = MLG
         self.aggs = aggs
 
@@ -237,7 +208,6 @@ class EncoderN(nn.Module):
 
 
     def forward(self, nodes):
-       
         if not isinstance(nodes, list) and nodes.is_cuda:
             nodes = nodes.data.cpu().numpy().tolist()        
         neigh_feats_all= [agg(nodes, adj, ind) for adj, agg, ind in zip(self.MLG, self.aggs, range(len(self.MLG)))]
@@ -268,12 +238,12 @@ class MeanAggregator(nn.Module):
         self.percent = percent
 
 
-    def message(self, edges):  # out degree
+    def message(self, edges): 
       
         em_p = edges.src['node_emb_p'] 
         em_n = edges.src['node_emb_n'] 
 
-        mask = ((edges.data['hop']-1)>0)#.squeeze() # 1 hop 구분 알파도 학습 가능하도록 = 1로  고정 안함
+        mask = ((edges.data['hop']-1)>0)
        
         em_p[mask] = edges.src['node_emb_p'][mask] * self.alpha(edges.data['hop']-1)[mask].view(-1,1)
         em_n[mask] = edges.src['node_emb_n'][mask] * self.alpha(edges.data['hop']-1)[mask].view(-1,1)
@@ -283,19 +253,17 @@ class MeanAggregator(nn.Module):
         em_np= em_n * self.percent[2]  
         em_nn= em_n * self.percent[3]
  
-        #out degree
         emb_p = (em_pp + em_np) / edges.src['out_degree']
         emb_n = (em_pn + em_nn) / edges.src['out_degree']
 
         return {'m_p' : emb_p, 'm_n' : emb_n}
 
-    def aggregator(self,nodes): # in degree
+    def aggregator(self,nodes):
         return {'node_emb_p2': nodes.mailbox['m_p'].sum(1), 'node_emb_n2': nodes.mailbox['m_n'].sum(1)} #degree normalization 할때는 sum 해야함
 
 
 
     def forward(self, batch_nodes, MLG, ind):
-        # if SAMPLER == True:
         MLG.readonly(True)
         neightbor_sampler = NeighborSampler( MLG , len(batch_nodes) , expand_factor=SAMPLE_NUM , neighbor_type='in',  seed_nodes=batch_nodes)
     
@@ -308,7 +276,6 @@ class MeanAggregator(nn.Module):
         sub_sample.layers[0].data['out_degree'] = sub_sample.layer_out_degree(0).type(torch.FloatTensor).unsqueeze(1).to(DEVICES) # degree normalization
         sub_sample.block_compute(block_id=0,  message_func = self.message, reduce_func = self.aggregator)
        
-      
         sub_sample.layers[1].data['node_emb_p'] = sub_sample.layers[1].data['node_emb_p2'] 
         sub_sample.layers[1].data['node_emb_n'] = sub_sample.layers[1].data['node_emb_n2'] 
 
@@ -318,7 +285,6 @@ class MeanAggregator(nn.Module):
         final_embeddings_pos = sub_sample.layers[1].data['node_emb_p']#[batch_nodes]
         final_embeddings_neg = sub_sample.layers[1].data['node_emb_n']#[batch_nodes]
 
-    
         return final_embeddings_pos, final_embeddings_neg
 
 class SDGNN(nn.Module):
@@ -351,19 +317,18 @@ class SDGNN(nn.Module):
         sign_loss = 0
         status_loss = 0
 
-       
         for index, node in enumerate(nodes):
-            a_emb = nodes_embs[unique_nodes_dict[node], :] # a 한개
-            pos_neigs = list([unique_nodes_dict[i] for i in pos_neighbors[node]]) #b 여러개
-            neg_neigs = list([unique_nodes_dict[i] for i in neg_neighbors[node]]) #b 여러개
+            a_emb = nodes_embs[unique_nodes_dict[node], :] 
+            pos_neigs = list([unique_nodes_dict[i] for i in pos_neighbors[node]]) 
+            neg_neigs = list([unique_nodes_dict[i] for i in neg_neighbors[node]]) 
             pos_num = len(pos_neigs)
             neg_num = len(neg_neigs)
 
-            sta_pos_neighs_out = list([unique_nodes_dict[i] for i in adj_lists_out_p[node]])# out b+
-            sta_neg_neighs_out = list([unique_nodes_dict[i] for i in adj_lists_out_n[node]])# out b-          
+            sta_pos_neighs_out = list([unique_nodes_dict[i] for i in adj_lists_out_p[node]])
+            sta_neg_neighs_out = list([unique_nodes_dict[i] for i in adj_lists_out_n[node]])          
 
             if pos_num > 0:
-                pos_neig_embs = nodes_embs[pos_neigs, :] # B 여러개 
+                pos_neig_embs = nodes_embs[pos_neigs, :] 
 
                 # sign loss: entropy
                 sign_loss += F.binary_cross_entropy_with_logits(torch.einsum("nj,j->n", [pos_neig_embs, a_emb]), torch.ones(pos_num).to(DEVICES))     
@@ -401,15 +366,14 @@ def load_data2(filename=''):
             person1 = int(info[0])
             person2 = int(info[1])
             v = int(info[2])
-            # adj_lists3[person2].add(person1)
-            adj_list_out_unsign[person1].add(person2)  # ->
+            adj_list_out_unsign[person1].add(person2)  
 
             if v == 1:
                 adj_list_pos[person1].add(person2)
                 adj_list_pos[person2].add(person1)
 
-                adj_list_out_pos[person1].add(person2) # ->
-                adj_list_in_pos[person2].add(person1) # <-
+                adj_list_out_pos[person1].add(person2)
+                adj_list_in_pos[person2].add(person1) 
             else:
                 adj_list_neg[person1].add(person2)
                 adj_list_neg[person2].add(person1)
@@ -431,7 +395,7 @@ def run(dataset, k):
         res.write("BATCH_SIZE: "+ str(BATCH_SIZE) +"\n")
         res.write("EPOCHS: "+ str(EPOCHS) +"\n")
         res.write("HOP: "+ str(HOP) +"\n")
-        res.write("HOP_DISTIN: "+ str(HOP_DISTIN) +"\n")
+        # res.write("HOP_DISTIN: "+ str(HOP_DISTIN) +"\n")
         res.write("task: "+ TASK +"\n")
     
         res.write("EPOCH\t" +  "LOSS\t\t" + "pos_ratio\t\t"+ "accuracy\t\t" + "f1_score\t\t"+ "microf1_score\t\t" + "macrof1_score\t\t"+ "auc_score\n")
@@ -441,7 +405,7 @@ def run(dataset, k):
 
     filename = './experiment-data/{}/{}_u{}_{}.train'.format(dataset,dataset, k, PER)
     undirect_pos, outdirect_pos, indirect_pos, undirect_neg, outdirect_neg, indirect_neg, outdirect_unsign = load_data2(filename) # pos_all, pos out, pos in, neg_all, neg out, neg in, posnegall
-    mtx_T1, mtx_T2, mtx_U1, mtx_U2 = load_data1(filename) # mtx_T1, mtx_T2, mtx_U1, mtx_U2 
+    mtx_T1, mtx_T2, mtx_U1, mtx_U2 = load_data1(filename)  
     print(k, dataset, 'data load!')
 
     graphT1 = dgl.DGLGraph()
@@ -452,7 +416,6 @@ def run(dataset, k):
     if GET_DGL=='True':
         graphT1.add_nodes(num_nodes)
         graphT1.ndata['node_idx'] = torch.tensor(list(range(num_nodes)))
-        # p1s3, p2s3, signs3, hop3, pp_per3, pn_per3, np_per3, nn_per3 = zip(*undirect_pos_neg)
         p1s1, p2s1, signs1, hop1 = zip(*mtx_T1)
         for p1, p2 in tqdm(zip(p1s1, p2s1)): #17분
             graphT1.add_edges(int(p1), int(p2))
@@ -564,6 +527,7 @@ def run(dataset, k):
     model = model.to(DEVICES)
 
     print(model.train())
+
     #for layer1
     optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
 
