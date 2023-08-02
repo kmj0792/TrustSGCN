@@ -14,16 +14,37 @@ The input dataset should be saved in ```./experiment-data/``` folder.
 
 The structure of the input file is the following:
 
-```node_id1 | node_id2 | sign```
+```| node_id1 | node_id2 | sign |```
 
 Node ids start from 0 to |*V*|-1 (*V* is the set of nodes in the dataset).
 
 ### Output
 The output of pre-processing files are saved in ```./embeddings/``` folder. 
+
 The output of embeddings files are saved in ```./embeddings/trustsgcn-{args.agg}``` folder. 
+
 The output of accuracies files are saved in ```./embeddings/trustsgcn-{args.agg}/result``` folder. 
 
 ### Arguments
+#### For pre-processing (in ```argument.py```)
+```
+--dataset                 Dataset name. (default: "bitcoin_alpha")
+--hop                     Maximum hop count to include in EgoNets. (default: 2)
+--percent                 Sparsity setting (80, 60, 40, 20). (default: 80)
+--p_thres                 Positive threshold (beta_+). (default: 0.98)
+--n_thres                 Negative threshold (beta_-). (default: 0.98)
+--func                    Select a function of (countTRI, extract, setsubgraph, predict, setproMTX) (default: "setproMTX")
+```
+
+#### For embedding propagation (in ```trustsgcn.py```)
+```
+--dataset                 Dataset name. (default: "bitcoin_alpha")
+--hop                     Maximum hop count to include in EgoNets. (default: 2)
+--percent                 Sparsity setting (80, 60, 40, 20). (default: 80)
+--sample_num              Random sampling num (bitcoin_alpha: 30, bitcoin_otc: 30, slashdot: 20, epinions: 10).
+--p_thres                 Positive threshold (beta_+). (default: 0.98)
+--n_thres                 Negative threshold (beta_-). (default: 0.98)
+```
 
 ### Procedure
 1. Get ratios of balanced/unbalanced triads (```pre_analysis``` percentage).
