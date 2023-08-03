@@ -59,7 +59,7 @@ The accuracies of TrustSGCN are saved in ```./embeddings/trustsgcn-{args.agg}/re
 1. Obtain the ratios of balanced/unbalanced triads (pre_analysis percentage).
 python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres=0.98 --n_thres=0.98 --func=countTRI
 
-2. xtract 23 topological features from the train dataset.
+2. Extract 23 topological features from the train dataset.
 python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres=0.98 --n_thres=0.98 --func=extract
 
 3. Generate the target node's extended EgoNet.
