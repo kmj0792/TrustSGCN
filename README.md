@@ -47,34 +47,25 @@ The accuracies of TrustSGCN are saved in ```./embeddings/trustsgcn-{args.agg}/re
 ```
 
 ## Procedure
+```
 1. Obtain the ratios of balanced/unbalanced triads (```pre_analysis``` percentage).
-
-```python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres=0.98 --n_thres=0.98 --func=countTRI```
-
+python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres=0.98 --n_thres=0.98 --func=countTRI
 
 2. Extract 23 topological features from the train dataset.
-
-```python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres=0.98 --n_thres=0.98 --func=extract```
-
+python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres=0.98 --n_thres=0.98 --func=extract
 
 3. Generate the target node's extended EgoNet.
-
-```python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres=0.98 --n_thres=0.98 --func=setsubgraph```
-
+python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres=0.98 --n_thres=0.98 --func=setsubgraph
 
 4. Predict the edge sign and confidence score between two nodes using 23 topological features.
-
-```python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres=0.98 --n_thres=0.98 --func=predict```
-
+python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres=0.98 --n_thres=0.98 --func=predict
 
 5. Measure the trustworthiness of edge signs in the EgoNet using two conditions.
-
-```python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres=0.98 --n_thres=0.98 --func=setproMTX```
-
+python preprocessing.py --dataset=bitcoin_alpha --hop=2 --percent=80 --p_thres=0.98 --n_thres=0.98 --func=setproMTX
 
 6. Perform different embedding propagations (trustworthy or untrustworthy).
-
-```python trustsgcn.py --dataset=bitcoin_alpha --batch_size=300 --percent=80 --k=1 --hop=2 --p_thres=0.98 --n_thres=0.98 --sample_num=30 --get_dgl=True```
+python trustsgcn.py --dataset=bitcoin_alpha --batch_size=300 --percent=80 --k=1 --hop=2 --p_thres=0.98 --n_thres=0.98 --sample_num=30 --get_dgl=True
+```
 
 ## Requirements
 The code has been tested running under Python 3.7.4. The required packages are as follows:
