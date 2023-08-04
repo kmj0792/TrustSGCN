@@ -79,6 +79,7 @@ The code has been tested running under Python 3.7.4. The required packages are a
 - ```torch-geometric==2.2.0```
 - ```torch-scatter==2.1.0+pt112cu116```
 - ```torch-sparse==0.6.16+pt112cu116```
+- ```conda install pytorch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1 cudatoolkit=11.6 -c pytorch -c conda-forge```
 
 ## Cite
   ```
